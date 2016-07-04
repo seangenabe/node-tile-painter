@@ -6,8 +6,8 @@ const getOrCreate = require('./util/get-or-create')
 const shortcutListNode = require('./shortcut-list-node')
 const connect = require('throw-down/connect')
 const update = require('throw-down/update')(yo.update)
-const pscommand = require('./util/pscommand')
 const Path = require('path')
+const pscommand = require('./util/pscommand')
 
 module.exports = function shortcutList(shortcutUpdater) {
   let id
@@ -44,7 +44,7 @@ module.exports = function shortcutList(shortcutUpdater) {
   function onload(err) {
     if (err) {
       shortcuts = []
-      errHtml = errorMessage('shortcut list', err)
+      errHtml = errorMessage(err, 'shortcut list')
     }
     else {
       errHtml = undefined
@@ -58,7 +58,7 @@ module.exports = function shortcutList(shortcutUpdater) {
       shortcutsHtml = renderTree()
     }
     else {
-      shortcutsHtml = yo`<p class="loading">Loading...</p>`
+      shortcutsHtml = yo`<div class="throbber"></div>`
     }
     return yo`<div>
       ${errHtml}

@@ -35,6 +35,8 @@
     "bootstrap": "^3.3.6",
     "command-join": "^1.0.1",
     "concat-stream": "^1.5.1",
+    "edge": "^5.9.2",
+    "edge-ps": "0.1.0-pre",
     "electron-debug": "^1.0.0",
     "end-of-stream": "^1.1.0",
     "globby": "^5.0.0",

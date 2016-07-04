@@ -65,9 +65,6 @@ html, body, input, textarea, buttons
   background-color white
   transition transform 0.2s
 
-#sidedrawer .loading
-  padding 20px
-
 #content-wrapper
   min-height 100%
   overflow-x hidden
@@ -85,3 +82,14 @@ html, body, input, textarea, buttons
 
 #sidedrawer.active
   transform translate(200px)
+
+@keyframes load
+  100% { transform: rotate(360deg); }
+
+// ## Throbber
+
+.throbber
+  background-image url('./throbber-medium.svg')
+  height 20px
+  width 20px
+  margin 2em auto
