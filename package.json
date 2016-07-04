@@ -1,0 +1,53 @@
+{
+  "name": "tile-painter",
+  "productName": "Tile Painter",
+  "version": "0.0.0",
+  "description": "Configure pinned desktop shortcuts in the Start menu for Windows.",
+  "license": "MIT",
+  "repository": "seangenabe/tile-painter",
+  "author": {
+    "name": "Sean Genabe",
+    "email": "seangenabe@outlook.com"
+  },
+  "scripts": {
+    "start": "electron .",
+    "stylus": "stylus -c -m app/index.styl",
+    "stylus:watch": "npm run stylus -- --watch",
+    "babel": "babel app/scripts-src --out-dir app/scripts",
+    "babel:watch": "npm run babel -- --watch",
+    "build:electron": "electron-packager . --out=dist --app-version=$npm_package_version --prune --asar --overwrite --all",
+    "watch": "chastifol [ npm run stylus:watch ] [ npm run babel:watch ]",
+    "build": "npm run stylus && npm run build:electron",
+    "nodemon": "nodemon --watch app/scripts --watch app/index.css --watch index.js --exec npm run start"
+  },
+  "files": [
+    "index.js",
+    "index.html",
+    "index.css"
+  ],
+  "keywords": [
+    "electron-app",
+    "electron"
+  ],
+  "dependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "bootstrap": "^3.3.6",
+    "electron-debug": "^1.0.0",
+    "globby": "^5.0.0",
+    "lodash.flatten": "^4.2.0",
+    "muicss": "^0.6.5",
+    "purecss": "^0.6.0",
+    "stylus": "^0.54.5",
+    "throw-down": "^0.1.7",
+    "winreg": "^1.2.1",
+    "yo-yo": "^1.2.2"
+  },
+  "devDependencies": {
+    "chastifol": "^3.0.1",
+    "devtron": "^1.1.0",
+    "electron-packager": "^7.0.0",
+    "electron-prebuilt": "^1.0.1",
+    "nodemon": "^1.9.2"
+  }
+}
