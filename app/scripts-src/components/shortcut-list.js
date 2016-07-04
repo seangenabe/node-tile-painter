@@ -1,13 +1,13 @@
 const yo = require('yo-yo')
-const getreg = require('./util/getreg')
 const errorMessage = require('./error-message')
 const flatten = require('lodash.flatten')
 const globby = require('globby')
-const expandVars = require('./util/expand-vars')
 const getOrCreate = require('./util/get-or-create')
 const shortcutListNode = require('./shortcut-list-node')
 const connect = require('throw-down/connect')
 const update = require('throw-down/update')(yo.update)
+const pscommand = require('./util/pscommand')
+const Path = require('path')
 
 module.exports = function shortcutList(shortcutUpdater) {
   let id
@@ -21,14 +21,13 @@ module.exports = function shortcutList(shortcutUpdater) {
 
   async function load() {
     try {
-      let parent = 'HKCU/Software/Microsoft/Windows/CurrentVersion/Explorer'
       let [programsDirectory, commonProgramsDirectory] =
         await Promise.all([
-          getreg(`${parent}/User Shell Folders`, 'Programs'),
-          getreg(`${parent}/Shell Folders`, 'Programs')
+          pscommand(`[Environment]::GetFolderPath('StartMenu')`),
+          pscommand(`[Environment]::GetFolderPath('CommonStartMenu')`)
         ])
-      programsDirectory = expandVars(programsDirectory.value)
-      commonProgramsDirectory = commonProgramsDirectory.value
+      programsDirectory = Path.join(programsDirectory, 'Programs')
+      commonProgramsDirectory = Path.join(commonProgramsDirectory, 'Programs')
       let shortcutsArray = await Promise.all([
         getShortcuts(programsDirectory, 'user'),
         getShortcuts(commonProgramsDirectory, 'common')
@@ -59,7 +58,7 @@ module.exports = function shortcutList(shortcutUpdater) {
       shortcutsHtml = renderTree()
     }
     else {
-      shortcutsHtml = yo`<p>Loading...</p>`
+      shortcutsHtml = yo`<p class="loading">Loading...</p>`
     }
     return yo`<div>
       ${errHtml}
@@ -67,9 +66,9 @@ module.exports = function shortcutList(shortcutUpdater) {
     </div>`
   }
 
-  async function getShortcuts(startMenuDirectory, data) {
-    let shortcuts = await globby(['**/*.lnk'], { cwd: startMenuDirectory })
-    return shortcuts.map(s => ({ dir: startMenuDirectory, path: s, data }))
+  async function getShortcuts(programsDirectory, source) {
+    let shortcuts = await globby(['**/*.lnk'], { cwd: programsDirectory })
+    return shortcuts.map(s => ({ dir: programsDirectory, path: s, source }))
   }
 
   function renderTree() {
@@ -91,9 +90,10 @@ module.exports = function shortcutList(shortcutUpdater) {
         )
         currentParent = folder
       }
-      let shortcutName = paths[paths.length - 1].replace(/\.lnk$/, '')
+      let shortcutFilename = paths[paths.length - 1]
+      let shortcutName = shortcutFilename.replace(/\.lnk$/, '')
       currentParent.children.set(
-        shortcutName,
+        shortcutFilename,
         { isLeaf: true, data: shortcut, name: shortcutName }
       )
     }

@@ -32,14 +32,14 @@ function renderNode(item, shortcutUpdater) {
     ` : undefined
     return yo`
       <li>
-        <strong class="treeview-folder" onclick=${toggle}>${item.name}</strong>
+        <strong class="treeview-folder ${item.expanded ? 'active' : ''}" onclick=${toggle}>${item.name}</strong>
         ${childrenHtml}
       </li>
     `
   }
 
   function onleaf(e) {
-    shortcutUpdater.selected = item
+    shortcutUpdater.selected = item.data
     shortcutUpdater.update()
     e.stopPropagation()
   }

@@ -23,6 +23,13 @@ pre.error-message-pre
 .treeview-root strong
   display block
   padding 15px 11px
+  &:before
+    font-family 'Segoe MDL2 Assets'
+    font-size 80%
+    content "\e00f"
+    padding-right 0.5em
+  &.active:before
+    content "\e011"
 
 .treeview-root strong,
 .treeview-leaf
@@ -57,6 +64,9 @@ html, body, input, textarea, buttons
   z-index 2
   background-color white
   transition transform 0.2s
+
+#sidedrawer .loading
+  padding 20px
 
 #content-wrapper
   min-height 100%
