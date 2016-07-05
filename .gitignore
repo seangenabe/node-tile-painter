@@ -1,4 +1,4 @@
-node_modules
+/node_modules
 app/scripts
 app/index.css
 app/index.css.map

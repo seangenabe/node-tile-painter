@@ -5,7 +5,7 @@ const update = require('throw-down/update')(yo.update)
 const shortcutPanel = require('./shortcut-panel')
 
 module.exports = function main() {
-  let shortcutUpdater = { selected: undefined }
+  let shortcutUpdater = { selected: undefined, update: () => {} }
 
   return yo`
     <div>

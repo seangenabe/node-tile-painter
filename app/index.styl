@@ -93,3 +93,27 @@ html, body, input, textarea, buttons
   height 20px
   width 20px
   margin 2em auto
+
+// ## Preview
+
+.preview-box
+  position relative
+  margin 10px
+  background-color #a0a0a0
+  display inline-block
+
+.preview-box img
+  position absolute
+  top 50%
+  left 50%
+  transform translate(-50%, -50%)
+
+resizeFactor = 0.7
+
+.preview-box-large
+  height 150px * resizeFactor
+  width 150px * resizeFactor
+
+.preview-box-small
+  height 71px * resizeFactor
+  width 71px * resizeFactor

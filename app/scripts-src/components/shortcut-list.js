@@ -15,8 +15,8 @@ module.exports = function shortcutList(shortcutUpdater) {
   let shortcuts
   load()
 
-  function init(_id) {
-    id = _id
+  function track(i) {
+    id = i
   }
 
   async function load() {
@@ -100,5 +100,5 @@ module.exports = function shortcutList(shortcutUpdater) {
     return treeRoot
   }
 
-  return connect(render, init)
+  return connect(render, track)
 }
