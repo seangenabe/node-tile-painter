@@ -97,16 +97,17 @@ html, body, input, textarea, buttons
 // ## Preview
 
 .preview-box
-  position relative
   margin 10px
   background-color #a0a0a0
   display inline-block
 
+.preview-box > div
+  display flex
+  height 100%
+  justify-content center
+
 .preview-box img
-  position absolute
-  top 50%
-  left 50%
-  transform translate(-50%, -50%)
+  align-self center
 
 resizeFactor = 0.7
 

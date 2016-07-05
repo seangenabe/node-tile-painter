@@ -36,11 +36,15 @@ function shortcutPreview(shortcut) {
       iconElement1 = yo`
         <div>
           <div class="preview-box preview-box-large">
-            <img src="data:image/png;base64,${icon.toString('base64')}"/>
+            <div>
+              <img src="data:image/png;base64,${icon.toString('base64')}"/>
+            </div>
             <span>${shortcut.name}</span>
           </div>
           <div class="preview-box preview-box-small">
-            <img src="data:image/png;base64,${icon.toString('base64')}"/>
+            <div>
+              <img src="data:image/png;base64,${icon.toString('base64')}"/>
+            </div>
           </div>
         </div>
       `
