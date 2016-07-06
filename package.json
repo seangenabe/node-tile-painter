@@ -47,6 +47,7 @@
     "stylus": "^0.54.5",
     "throw-down": "^0.1.7",
     "winreg": "^1.2.1",
+    "xmldom": "^0.1.22",
     "yo-yo": "^1.2.2"
   },
   "devDependencies": {

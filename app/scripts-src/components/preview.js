@@ -8,10 +8,10 @@ const throbber = require('./throbber')
 const getThemeColor = require('./util/get-theme-color')
 
 module.exports = shortcutPreview
-function shortcutPreview(shortcut) {
+function shortcutPreview(shortcut, props) {
   let icon
   let id
-  let bg = "#a0a0a0"
+  let bg // default tile background = user accent color
   load()
   getSingletonThemeColor()
 
@@ -37,15 +37,25 @@ function shortcutPreview(shortcut) {
       iconElement1 = errorMessage(icon, 'preview')
     }
     else {
+      let style
+      if (props.bg) {
+        style = `background-color: ${props.bg}`
+      }
+      else if (bg) {
+        style = `background-color: ${bg}`
+      }
+      else {
+        style = ''
+      }
       iconElement1 = yo`
         <div>
-          <div class="preview-box preview-box-medium" style="background-color: ${bg}">
+          <div class="preview-box preview-box-medium" style=${style}>
             <div>
               <img src="data:image/png;base64,${icon.toString('base64')}"/>
             </div>
             <span>${shortcut.name}</span>
           </div>
-          <div class="preview-box preview-box-small" style="background-color: ${bg}">
+          <div class="preview-box preview-box-small" style=${style}>
             <div>
               <img src="data:image/png;base64,${icon.toString('base64')}"/>
             </div>
@@ -59,6 +69,8 @@ function shortcutPreview(shortcut) {
       </div>
     `
   }
+
+  props.on('update bg', () => update(id, render()))
 
   return connect(render, init)
 }
