@@ -42,7 +42,10 @@ module.exports = class VisualElementsManifest {
       return
     }
     this.xml = xml
-    obj.bg = ve.attrs.BackgroundColor
+    let attrs = ve.attrs
+    obj.bg = attrs.BackgroundColor
+    obj.showfg =
+      booleanConverter.stringToBoolean(attrs.ShowNameOnSquare150x150Logo)
   }
 
   async save(obj) {
@@ -59,4 +62,9 @@ module.exports = class VisualElementsManifest {
     await FS.writeFile(vemPath, xmlSerialized)
   }
 
+}
+
+const booleanConverter = {
+  booleanToString(b) { return b ? 'on' : 'off' },
+  stringToBoolean(s) { return s === 'on' }
 }

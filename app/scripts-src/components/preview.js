@@ -6,7 +6,6 @@ const Path = require('path')
 const getFileInfo = require('./util/get-file-info')
 const throbber = require('./throbber')
 const getThemeColor = require('./util/get-theme-color')
-const VisualElementsManifest = require('./util/visual-elements-manifest')
 const Util = require('util')
 
 module.exports = shortcutPreview
@@ -52,13 +51,14 @@ function shortcutPreview(shortcut, props) {
       else {
         style = ''
       }
+      let name = Path.basename(shortcut.path, '.lnk')
       iconElement1 = yo`
         <div>
           <div class="preview-box preview-box-medium" style=${style}>
             <div>
               <img src="data:image/png;base64,${icon.toString('base64')}"/>
             </div>
-            <span>${shortcut.name}</span>
+            <span>${name}</span>
           </div>
           <div class="preview-box preview-box-small" style=${style}>
             <div>

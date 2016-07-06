@@ -43,17 +43,9 @@ module.exports = function editor(shortcut, props) {
   }
 
   function render() {
-    let { bg, palette } = props
+    let { bg, palette, showfg } = props
     let checked
     let hidden
-    if (bg) {
-      checked = 'checked'
-      hidden = ''
-    }
-    else {
-      checked = ''
-      hidden = 'hidden'
-    }
     let paletteElement
     if (palette) {
       paletteElement = palette.map(color => paletteItem(color, props))
@@ -64,10 +56,16 @@ module.exports = function editor(shortcut, props) {
     return yo`
       <div class="mui-panel">
         <legend>Background</legend>
-        <div class="mui-checkbox">
-          <input type="color" value=${bg ? bg : DEFAULT_COLOR} onchange=${changecolor} ${bg ? '' : 'disabled'}/>
+        <div>
+          <input type="color" value=${bg ? bg : DEFAULT_COLOR} onchange=${changecolor}/>
           ${paletteElement}
           <button type="button" class="mui-btn mui-btn--accent" onclick=${clearcolor} title="Unset tile background color">Clear</button>
+        </div>
+        <legend>Foreground</legend>
+        <div class="mui-checkbox">
+          <button type="button" class="mui-btn mui-btn--accent" onclick=${() => { props.showfg = false}} title="Do not show app name on tile">Hide</button>
+          <button type="button" class="mui-btn" onclick=${() => { props.showfg = true; props.fg = 'light' }} title="Light foreground (for dark backgrounds)" style="background: #505050; color: white">Light</button>
+          <button type="button" class="mui-btn" onclick=${() => { props.showfg = true; props.fg = 'dark' }} title="Dark foreground (for light backgrounds)" style="background: #c0c0c0">Dark</button>
         </div>
         ${saver(shortcut, props)}
       </div>
