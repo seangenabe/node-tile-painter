@@ -30,6 +30,7 @@ module.exports = function shortcutProperties(shortcut, props) {
       // visual elements manifest
       let vem = new VisualElementsManifest(obj.TargetPath)
       await vem.load(props)
+      props.vem = vem
     }
     catch (err) {
       obj = err

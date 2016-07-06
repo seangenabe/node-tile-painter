@@ -14,6 +14,7 @@ function shortcutPreview(shortcut, props) {
   let icon // icon in png format
   let id
   let bg // default tile background = user accent color
+  let pvbg = 0x50
   load()
   // fire singleton async retrieve theme color
   getSingletonThemeColor()
@@ -68,10 +69,16 @@ function shortcutPreview(shortcut, props) {
       `
     }
     return yo`
-      <div class="mui-panel">
+      <div class="mui-panel" style="background-color: rgb(${pvbg}, ${pvbg}, ${pvbg})">
         ${iconElement1}
+        <input type="range" oninput=${changepvbg} min="0" max="255" style="width: 100%"/>
       </div>
     `
+  }
+
+  function changepvbg(e) {
+    pvbg = e.target.value
+    updateIcon()
   }
 
   props.on('update bg', () => update(id, render()))

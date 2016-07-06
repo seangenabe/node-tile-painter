@@ -6,6 +6,7 @@ const getPixels = pify(require('get-pixels'))
 const getPalette = require('get-rgba-palette')
 const rgbHex = require('rgb-hex')
 const paletteItem = require('./palette-item')
+const saver = require('./saver')
 
 const DEFAULT_COLOR = "#000000"
 
@@ -62,14 +63,13 @@ module.exports = function editor(shortcut, props) {
     }
     return yo`
       <div class="mui-panel">
-        <form>
-          <legend>Background</legend>
-          <div class="mui-checkbox">
-            <input type="color" value=${bg ? bg : DEFAULT_COLOR} onchange=${changecolor} ${bg ? '' : 'disabled'}/>
-            ${paletteElement}
-            <button type="button" class="mui-btn" onclick=${clearcolor} title="Unset tile background color">Clear</button>
-          </div>
-        </form>
+        <legend>Background</legend>
+        <div class="mui-checkbox">
+          <input type="color" value=${bg ? bg : DEFAULT_COLOR} onchange=${changecolor} ${bg ? '' : 'disabled'}/>
+          ${paletteElement}
+          <button type="button" class="mui-btn mui-btn--accent" onclick=${clearcolor} title="Unset tile background color">Clear</button>
+        </div>
+        ${saver(shortcut, props)}
       </div>
     `
   }
