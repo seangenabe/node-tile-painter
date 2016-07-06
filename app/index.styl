@@ -96,21 +96,8 @@ html, body, input, textarea, buttons
 
 // ## Preview
 
-.preview-box
-  margin 10px
-  background-color #a0a0a0
-  display inline-block
-  transition-duration 0.3s
-
-.preview-box > div
-  display flex
-  height 100%
-  justify-content center
-
-.preview-box img
-  align-self center
-
 f = 0.85 // resizing factor // TODO: DPI-related?
+
 sw = 71px
 sh = 71px
 mw = 150px
@@ -119,8 +106,25 @@ mh = 150px
 ss = 0.5
 ms = 1 / 3
 
-.preview-box
+.preview-box-container
   transform scale(f)
+  width fit-content
+
+.preview-box
+  background-color #a0a0a0
+  transition-duration 0.3s
+  background-size contain
+  vertical-align top
+  display inline-block
+  position relative
+
+.preview-box > div
+  display flex
+  height 100%
+  justify-content center
+
+.preview-box img
+  align-self center
 
 .preview-box span
   position absolute
@@ -147,6 +151,9 @@ ms = 1 / 3
   img
     height sh * ss
     width sw * ss
+
+.preview-box-img img
+  display none
 
 // ## Palette
 

@@ -57,7 +57,6 @@ namespace UxTheme {
 [UxTheme.ColorMethods]::GetStartSelectionBackground() | ConvertTo-Json -Compress
 `
   let result = JSON.parse(await pscommand(command))
-  console.log('result', require('util').inspect(result, { colors: true })) // DEBUG
   let [a, b, g, r] = result
   return { a, r, g, b }
 }

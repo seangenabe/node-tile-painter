@@ -8,6 +8,7 @@ const rgbHex = require('rgb-hex')
 const paletteItem = require('./palette-item')
 const saver = require('./saver')
 const contrastWarning = require('./contrast-warning')
+const uploader = require('./uploader')
 
 const DEFAULT_COLOR = "#000000"
 
@@ -17,13 +18,13 @@ module.exports = function editor(shortcut, props) {
   function track(i) {
     id = i
     props.on('update bg', onupdate)
-    props.on('update icon', generatePalette)
+    props.on('update icon', generatePaletteFromIcon)
     props.on('update palette', onupdate)
   }
 
   function unload() {
     props.removeListener('update bg', onupdate)
-    props.removeListener('update icon', generatePalette)
+    props.removeListener('update icon', generatePaletteFromIcon)
     props.removeListener('update palette', onupdate)
   }
 
@@ -31,9 +32,13 @@ module.exports = function editor(shortcut, props) {
     update(id, render())
   }
 
-  async function generatePalette() {
+  async function generatePaletteFromIcon() {
+    return await generatePalette(props.icon, 'image/png')
+  }
+
+  async function generatePalette(buffer, mime) {
     try {
-      let pixels = await getPixels(props.icon, 'image/png')
+      let pixels = await getPixels(buffer, mime)
       let palette = getPalette(pixels.data, 8)
       palette = palette.map(rgb => `#${rgbHex(...rgb)}`)
       props.palette = palette
@@ -44,9 +49,7 @@ module.exports = function editor(shortcut, props) {
   }
 
   function render() {
-    let { bg, palette, showfg } = props
-    let checked
-    let hidden
+    let { bg, palette } = props
     let paletteElement
     if (palette) {
       paletteElement = palette.map(color => paletteItem(color, props))
@@ -67,21 +70,14 @@ module.exports = function editor(shortcut, props) {
           <button type="button" class="mui-btn" onclick=${() => { props.showfg = true; props.fg = 'light' }} title="Light foreground (for dark backgrounds)" style="background: #505050; color: white">Light</button>
           <button type="button" class="mui-btn" onclick=${() => { props.showfg = true; props.fg = 'dark' }} title="Dark foreground (for light backgrounds)" style="background: #c0c0c0">Dark</button>
         </div>
+        <legend title="Replaces the icon and background with an image.">Add full-bleed image</legend>
+        <div>
+          ${uploader(props)}
+        </div>
         ${contrastWarning(props)}
         ${saver(shortcut, props)}
       </div>
     `
-  }
-
-  function togglecolor(e) {
-    let { checked } = e.target
-    if (checked) {
-      props.bg = DEFAULT_COLOR
-    }
-    else {
-      props.bg = undefined
-    }
-    e.stopPropagation()
   }
 
   function changecolor(e) {

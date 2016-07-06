@@ -53,12 +53,24 @@ module.exports = class VisualElementsManifest {
       obj.showfg =
         booleanConverter.stringToBoolean(attrs.ShowNameOnSquare150x150Logo)
       obj.fg = attrs.ForegroundText
+      if (attrs.Square150x150Logo) {
+        let logoPath = Path.join(this.targetPath, '..', attrs.Square150x150Logo)
+        try {
+          await FS.stat(logoPath)
+          obj.img = await FS.readFile(logoPath)
+        }
+        catch (err) {
+          // Error occured while loading image.
+          // Just ignore the referenced image.
+        }
+      }
     }
     if (!this.xml) {
       // load defaults into obj
       obj.bg = undefined
       obj.showfg = true
       obj.fg = 'light'
+      obj.img = undefined
     }
   }
 
@@ -69,6 +81,7 @@ module.exports = class VisualElementsManifest {
       )
     }
     let { xml } = this
+    let { img } = obj
     let ve = xml.getChild('VisualElements')
     ve.attr('BackgroundColor', obj.bg)
     ve.attr('ForegroundText', obj.fg)
@@ -76,6 +89,11 @@ module.exports = class VisualElementsManifest {
       'ShowNameOnSquare150x150Logo',
       booleanConverter.booleanToString(obj.showfg)
     )
+    if (img) {
+      await FS.writeFile(Path.join(this.targetPath, '..', 'tile.png'), img)
+      ve.attr('Square150x150Logo', 'tile.png')
+      ve.attr('Square70x70Logo', 'tile.png')
+    }
     let vemPath = this.getVemPath()
     let xmlSerialized = xml.toString()
     await FS.writeFile(vemPath, xmlSerialized)
@@ -86,6 +104,7 @@ module.exports = class VisualElementsManifest {
     obj.bg = undefined
     obj.showfg = undefined
     obj.fg = undefined
+    obj.img = undefined
     await FS.unlink(vemPath)
   }
 

@@ -20,13 +20,13 @@ function shortcutPreview(shortcut, props) {
 
   function init(i) {
     id = i
-    for (let name of ['bg', 'fg', 'showfg']) {
+    for (let name of ['bg', 'fg', 'showfg', 'img']) {
       props.on(`update ${name}`, upd)
     }
   }
 
   function unload() {
-    for (let name of ['bg', 'fg', 'showfg']) {
+    for (let name of ['bg', 'fg', 'showfg', 'img']) {
       props.removeListener(`update ${name}`, upd)
     }
   }
@@ -43,6 +43,7 @@ function shortcutPreview(shortcut, props) {
     }
     upd()
   }
+
   function render() {
     let iconElement1
     if (!icon) { iconElement1 = throbber() }
@@ -50,29 +51,35 @@ function shortcutPreview(shortcut, props) {
       iconElement1 = errorMessage(icon, 'preview')
     }
     else {
-      let style
+      let styles = []
       if (props.bg) {
-        style = `background-color: ${props.bg}`
+        styles.push(`background-color: ${props.bg}`)
       }
       else if (bg) {
-        style = `background-color: ${bg}`
-      }
-      else {
-        style = ''
+        styles.push(`background-color: ${bg}`)
       }
       let name = Path.basename(shortcut.path, '.lnk')
       let fg = props.fg === 'light' ? 'white' : 'black'
+
+      let img = props.img
+      if (img) {
+        styles.push(`background-image: url('data:;base64,${img.toString('base64')}')`)
+      }
+      let style = styles.join(';')
+
       iconElement1 = yo`
         <div>
-          <div class="preview-box preview-box-medium" style=${style}>
-            <div>
-              <img src="data:image/png;base64,${icon.toString('base64')}"/>
+          <div class="preview-box-container">
+            <div class="preview-box preview-box-medium ${img ? 'preview-box-img' : ''}" style=${style}>
+              <div>
+                <img src="data:image/png;base64,${icon.toString('base64')}"/>
+              </div>
+              <span ${props.showfg ? '' : 'hidden'} style="color: ${fg}">${name}</span>
             </div>
-            <span ${props.showfg ? '' : 'hidden'} style="color: ${fg}">${name}</span>
-          </div>
-          <div class="preview-box preview-box-small" style=${style}>
-            <div>
-              <img src="data:image/png;base64,${icon.toString('base64')}"/>
+            <div class="preview-box preview-box-small ${img ? 'preview-box-img' : ''}" style=${style}>
+              <div>
+                <img src="data:image/png;base64,${icon.toString('base64')}"/>
+              </div>
             </div>
           </div>
         </div>
