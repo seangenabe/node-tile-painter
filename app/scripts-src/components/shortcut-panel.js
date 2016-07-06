@@ -7,16 +7,21 @@ const editor = require('./editor')
 
 module.exports = shortcutPanel
 function shortcutPanel(shortcut) {
-  let icon
   let id
-  const props = new EventEmitter()
+  const props = new Proxy(new EventEmitter(), {
+    set(target, key, value) {
+      let oldValue = target[key]
+      target[key] = value
+      target.emit(`update ${key}`, value, oldValue)
+      return true
+    }
+  })
 
   function init(_id) {
     id = _id
   }
 
   function render() {
-    let base64icon
     return yo`
       <div class="mui-container">
         <h3>Preview</h3>

@@ -6,8 +6,9 @@ const connect = require('throw-down/connect')
 const Path = require('path')
 const pscommand = require('./util/pscommand')
 const errorMessage = require('./error-message')
+const VisualElementsManifest = require('./util/visual-elements-manifest')
 
-module.exports = function shortcutProperties(shortcut) {
+module.exports = function shortcutProperties(shortcut, props) {
   let obj
   let id
   load()
@@ -25,6 +26,10 @@ module.exports = function shortcutProperties(shortcut) {
         $s | ConvertTo-Json -Compress
       `
       obj = JSON.parse(await pscommand(command))
+
+      // visual elements manifest
+      let vem = new VisualElementsManifest(obj.TargetPath)
+      await vem.load(props)
     }
     catch (err) {
       obj = err

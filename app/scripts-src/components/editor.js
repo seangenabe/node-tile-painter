@@ -8,7 +8,18 @@ const DEFAULT_COLOR = "#000000"
 module.exports = function editor(shortcut, props) {
   let id
 
-  function track(i) { id = i }
+  function track(i) {
+    id = i
+    props.on('update bg', onbgupdate)
+  }
+
+  function onremoved() {
+    props.removeListener('update bg', onbgupdate)
+  }
+
+  function onbgupdate() {
+    update(id, render())
+  }
 
   function render() {
     let { bg } = props
@@ -45,15 +56,11 @@ module.exports = function editor(shortcut, props) {
     else {
       props.bg = undefined
     }
-    props.emit('update bg')
-    update(id, render())
   }
 
   function changecolor(e) {
     props.bg = e.target.value
-    props.emit('update bg')
-    update(id, render())
   }
 
-  return connect(render, track)
+  return connect(render, track, null, null, onremoved)
 }

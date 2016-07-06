@@ -6,6 +6,8 @@ const Path = require('path')
 const getFileInfo = require('./util/get-file-info')
 const throbber = require('./throbber')
 const getThemeColor = require('./util/get-theme-color')
+const VisualElementsManifest = require('./util/visual-elements-manifest')
+const Util = require('util')
 
 module.exports = shortcutPreview
 function shortcutPreview(shortcut, props) {
@@ -13,6 +15,7 @@ function shortcutPreview(shortcut, props) {
   let id
   let bg // default tile background = user accent color
   load()
+  // fire singleton async retrieve theme color
   getSingletonThemeColor()
 
   function init(i) { id = i }
