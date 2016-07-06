@@ -18,10 +18,19 @@ function shortcutPreview(shortcut, props) {
   // fire singleton async retrieve theme color
   getSingletonThemeColor()
 
-  function init(i) { id = i }
-  function updateIcon() {
-    update(id, render())
+  function init(i) {
+    id = i
+    for (let name of ['bg', 'fg', 'showfg']) {
+      props.on(`update ${name}`, upd)
+    }
   }
+
+  function unload() {
+    for (let name of ['bg', 'fg', 'showfg']) {
+      props.removeListener(`update ${name}`, upd)
+    }
+  }
+
   async function load() {
     try {
       let fullPath = Path.join(shortcut.dir, shortcut.path)
@@ -32,7 +41,7 @@ function shortcutPreview(shortcut, props) {
     catch (err) {
       icon = err
     }
-    updateIcon()
+    upd()
   }
   function render() {
     let iconElement1
@@ -52,13 +61,14 @@ function shortcutPreview(shortcut, props) {
         style = ''
       }
       let name = Path.basename(shortcut.path, '.lnk')
+      let fg = props.fg === 'light' ? 'white' : 'black'
       iconElement1 = yo`
         <div>
           <div class="preview-box preview-box-medium" style=${style}>
             <div>
               <img src="data:image/png;base64,${icon.toString('base64')}"/>
             </div>
-            <span>${name}</span>
+            <span ${props.showfg ? '' : 'hidden'} style="color: ${fg}">${name}</span>
           </div>
           <div class="preview-box preview-box-small" style=${style}>
             <div>
@@ -71,19 +81,21 @@ function shortcutPreview(shortcut, props) {
     return yo`
       <div class="mui-panel" style="background-color: rgb(${pvbg}, ${pvbg}, ${pvbg})">
         ${iconElement1}
-        <input type="range" oninput=${changepvbg} min="0" max="255" style="width: 100%"/>
+        <input type="range" oninput=${changepvbg} min="0" max="255" value=${pvbg} style="width: 100%"/>
       </div>
     `
   }
 
   function changepvbg(e) {
     pvbg = e.target.value
-    updateIcon()
+    upd()
   }
 
-  props.on('update bg', () => update(id, render()))
+  function upd() {
+    update(id, render())
+  }
 
-  return connect(render, init)
+  return connect(render, init, null, null, unload)
 }
 
 function colorToCssString(color) {

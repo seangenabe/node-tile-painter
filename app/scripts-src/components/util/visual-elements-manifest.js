@@ -2,6 +2,11 @@ const LTX = require('ltx')
 const Path = require('path')
 const FS = require('@jokeyrhyme/pify-fs')
 
+const booleanConverter = {
+  booleanToString(b) { return b ? 'on' : 'off' },
+  stringToBoolean(s) { return s === 'on' }
+}
+
 // Visual elements manifest:
 // https://msdn.microsoft.com/en-us/library/windows/apps/dn393983.aspx
 
@@ -19,33 +24,42 @@ module.exports = class VisualElementsManifest {
   }
 
   async load(obj) {
-    let vemPath = this.getVemPath()
-    let stat
-    try {
-      stat = await FS.stat(vemPath)
-    }
-    catch (err) {
-      this.xml = undefined
-      return
-    }
+    loadXml: {
+      let vemPath = this.getVemPath()
+      let stat
+      try {
+        stat = await FS.stat(vemPath)
+      }
+      catch (err) {
+        this.xml = undefined
+        break loadXml
+      }
 
-    if (!stat.isFile()) {
-      this.xml = undefined
-      return
-    }
+      if (!stat.isFile()) {
+        this.xml = undefined
+        break loadXml
+      }
 
-    let fileContents = await FS.readFile(vemPath)
-    let xml = LTX.parse(fileContents)
-    let ve = xml.getChild('VisualElements')
-    if (!ve) {
-      this.xml = undefined
-      return
+      let fileContents = await FS.readFile(vemPath)
+      let xml = LTX.parse(fileContents)
+      let ve = xml.getChild('VisualElements')
+      if (!ve) {
+        this.xml = undefined
+        break loadXml
+      }
+      this.xml = xml
+      let attrs = ve.attrs
+      obj.bg = attrs.BackgroundColor
+      obj.showfg =
+        booleanConverter.stringToBoolean(attrs.ShowNameOnSquare150x150Logo)
+      obj.fg = attrs.ForegroundText
     }
-    this.xml = xml
-    let attrs = ve.attrs
-    obj.bg = attrs.BackgroundColor
-    obj.showfg =
-      booleanConverter.stringToBoolean(attrs.ShowNameOnSquare150x150Logo)
+    if (!this.xml) {
+      // load defaults into obj
+      obj.bg = undefined
+      obj.showfg = true
+      obj.fg = 'light'
+    }
   }
 
   async save(obj) {
@@ -57,14 +71,22 @@ module.exports = class VisualElementsManifest {
     let { xml } = this
     let ve = xml.getChild('VisualElements')
     ve.attr('BackgroundColor', obj.bg)
+    ve.attr('ForegroundText', obj.fg)
+    ve.attr(
+      'ShowNameOnSquare150x150Logo',
+      booleanConverter.booleanToString(obj.showfg)
+    )
     let vemPath = this.getVemPath()
     let xmlSerialized = xml.toString()
     await FS.writeFile(vemPath, xmlSerialized)
   }
 
-}
+  async remove(obj) {
+    let vemPath = this.getVemPath()
+    obj.bg = undefined
+    obj.showfg = undefined
+    obj.fg = undefined
+    await FS.unlink(vemPath)
+  }
 
-const booleanConverter = {
-  booleanToString(b) { return b ? 'on' : 'off' },
-  stringToBoolean(s) { return s === 'on' }
 }
