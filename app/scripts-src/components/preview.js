@@ -11,7 +11,7 @@ const Util = require('util')
 
 module.exports = shortcutPreview
 function shortcutPreview(shortcut, props) {
-  let icon
+  let icon // icon in png format
   let id
   let bg // default tile background = user accent color
   load()
@@ -27,6 +27,7 @@ function shortcutPreview(shortcut, props) {
       let fullPath = Path.join(shortcut.dir, shortcut.path)
       icon = await getFileInfo(fullPath)
       bg = colorToCssString(await getSingletonThemeColor())
+      props.icon = icon
     }
     catch (err) {
       icon = err
