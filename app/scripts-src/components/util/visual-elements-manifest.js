@@ -1,6 +1,7 @@
 const LTX = require('ltx')
 const Path = require('path')
 const FS = require('@jokeyrhyme/pify-fs')
+const globby = require('globby')
 
 const booleanConverter = {
   booleanToString(b) { return b ? 'on' : 'off' },
@@ -17,15 +18,24 @@ module.exports = class VisualElementsManifest {
     this.xml = undefined
   }
 
-  getVemPath() {
-    let manifestBasename =
-      `${Path.basename(this.targetPath, '.exe')}.visualelementsmanifest.xml`
-    return Path.join(this.targetPath, '..', manifestBasename)
+  async getVemPath() {
+    // case-insensitive basename
+    let targetBasename = Path.basename(this.targetPath.replace(/\.exe$/i, ''))
+    let manifestBasename = `${targetBasename}.visualelementsmanifest.xml`
+    let vemPath = Path.join(this.targetPath, '..', manifestBasename)
+    try {
+      let result = await globby([vemPath])
+      if (result[0]) {
+        vemPath = result[0]
+      }
+    }
+    catch (err) {}
+    return vemPath
   }
 
   async load(obj) {
     loadXml: {
-      let vemPath = this.getVemPath()
+      let vemPath = await this.getVemPath()
       let stat
       try {
         stat = await FS.stat(vemPath)

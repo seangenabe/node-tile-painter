@@ -2,3 +2,4 @@
 app/scripts
 app/index.css
 app/index.css.map
+*.log
