@@ -2,8 +2,7 @@ const LTX = require('ltx')
 const Path = require('path')
 const FS = require('@jokeyrhyme/pify-fs')
 const globby = require('globby')
-const autoElevateWrite = require('./auto-elevate-write')
-const WriteTaskManager = require('./write-task-manager')
+const bumpFile = require('./bump-file')
 
 const booleanConverter = {
   booleanToString(b) { return b ? 'on' : 'off' },
@@ -88,9 +87,6 @@ module.exports = class VisualElementsManifest {
   }
 
   async save(obj) {
-    let man = new WriteTaskManager()
-    // Let's queue this first since this is more likely to not need elevation.
-    man.addBumpTask(this.shortcutPath)
     if (!this.xml) {
       this.xml = LTX.parse(
         `<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><VisualElements/></Application>`
@@ -107,16 +103,15 @@ module.exports = class VisualElementsManifest {
     )
     if (img) {
       let imgPath = Path.join(this.targetPath, '..', 'tile.png')
-      man.addWriteTask(imgPath, img)
+      await FS.writeFile(imgPath, img)
       ve.attr('Square150x150Logo', 'tile.png')
       ve.attr('Square70x70Logo', 'tile.png')
     }
     let vemPath = await this.getVemPath()
     let xmlSerialized = xml.toString()
 
-    man.addWriteTask(vemPath, xmlSerialized)
-
-    await man.run()
+    await FS.writeFile(vemPath, xmlSerialized)
+    await bumpFile(this.shortcutPath)
   }
 
   async remove(obj) {
@@ -125,9 +120,7 @@ module.exports = class VisualElementsManifest {
     obj.showfg = undefined
     obj.fg = undefined
     obj.img = undefined
-    let man = new WriteTaskManager()
-    man.addUnlinkTask(vemPath)
-    await man.run()
+    await FS.unlink(vemPath)
   }
 
 }
