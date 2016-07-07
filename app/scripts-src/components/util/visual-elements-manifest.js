@@ -104,13 +104,13 @@ module.exports = class VisualElementsManifest {
       ve.attr('Square150x150Logo', 'tile.png')
       ve.attr('Square70x70Logo', 'tile.png')
     }
-    let vemPath = this.getVemPath()
+    let vemPath = await this.getVemPath()
     let xmlSerialized = xml.toString()
     await FS.writeFile(vemPath, xmlSerialized)
   }
 
   async remove(obj) {
-    let vemPath = this.getVemPath()
+    let vemPath = await this.getVemPath()
     obj.bg = undefined
     obj.showfg = undefined
     obj.fg = undefined
