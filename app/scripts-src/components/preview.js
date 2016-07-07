@@ -25,10 +25,15 @@ function shortcutPreview(shortcut, props) {
     }
   }
 
+  let upd = function upd() {
+    update(id, render())
+  }
+
   function unload() {
     for (let name of ['bg', 'fg', 'showfg', 'img']) {
       props.removeListener(`update ${name}`, upd)
     }
+    upd = function() {}
   }
 
   async function load() {
@@ -96,10 +101,6 @@ function shortcutPreview(shortcut, props) {
   function changepvbg(e) {
     pvbg = e.target.value
     upd()
-  }
-
-  function upd() {
-    update(id, render())
   }
 
   return connect(render, init, null, null, unload)

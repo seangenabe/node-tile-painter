@@ -17,6 +17,12 @@ module.exports = function shortcutProperties(shortcut, props) {
     id = _id
   }
 
+  let upd = function() { update(id, render()) }
+
+  function unload() {
+    upd = function() {}
+  }
+
   async function load() {
     try {
       let fullPath = Path.join(shortcut.dir, shortcut.path)
@@ -28,14 +34,14 @@ module.exports = function shortcutProperties(shortcut, props) {
       obj = JSON.parse(await pscommand(command))
 
       // visual elements manifest
-      let vem = new VisualElementsManifest(obj.TargetPath)
+      let vem = new VisualElementsManifest(fullPath, obj.TargetPath)
       await vem.load(props)
       props.vem = vem
     }
     catch (err) {
       obj = err
     }
-    update(id, render())
+    upd()
   }
 
   function render() {
@@ -68,5 +74,5 @@ module.exports = function shortcutProperties(shortcut, props) {
     `
   }
 
-  return connect(render, init)
+  return connect(render, init, null, null, unload)
 }

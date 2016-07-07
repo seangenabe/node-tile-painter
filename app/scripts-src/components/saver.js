@@ -1,5 +1,4 @@
 const yo = require('yo-yo')
-const bumpFile = require('./util/bump-file')
 const Path = require('path')
 const connect = require('throw-down/connect')
 const update = require('throw-down/update')(yo.update)
@@ -22,7 +21,6 @@ module.exports = function saver(shortcut, props) {
     try {
       let fullPath = Path.join(shortcut.dir, shortcut.path)
       await vem.save(props)
-      await bumpFile(fullPath)
       new Notification('Visual elements manifest saved.')
     }
     catch (err) {

@@ -15,9 +15,9 @@
     "stylus:watch": "npm run stylus -- --watch",
     "babel": "babel app/scripts-src --out-dir app/scripts",
     "babel:watch": "npm run babel -- --watch",
-    "build:electron": "electron-packager . --out=dist --app-version=$npm_package_version --prune --asar --overwrite --all",
+    "build:electron": "electron-packager . --out=dist --prune --asar --overwrite --platform=win32 --arch=x64",
     "watch": "chastifol [ npm run stylus:watch ] [ npm run babel:watch ]",
-    "build": "npm run stylus && npm run build:electron",
+    "build": "npm run stylus && npm run babel && npm run build:electron",
     "nodemon": "nodemon --watch app/scripts --watch app/index.css --watch index.js --exec npm run start"
   },
   "files": [
@@ -42,6 +42,7 @@
     "edge": "^5.9.2",
     "edge-ps": "0.1.0-pre",
     "electron-debug": "^1.0.0",
+    "elevator": "^2.1.0",
     "end-of-stream": "^1.1.0",
     "get-pixels": "^3.3.0",
     "get-rgba-palette": "^2.0.0",
@@ -55,6 +56,7 @@
     "purecss": "^0.6.0",
     "rgb-hex": "^1.0.0",
     "stylus": "^0.54.5",
+    "temp": "^0.8.3",
     "throw-down": "^0.1.7",
     "winreg": "^1.2.1",
     "xml": "^1.0.1",
