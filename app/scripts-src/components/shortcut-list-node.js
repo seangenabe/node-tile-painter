@@ -1,10 +1,11 @@
 const yo = require('yo-yo')
 const connect = require('throw-down/connect')
 const update = require('throw-down/update')(yo.update)
+const leafNode = require('./leaf-node')
 
 module.exports = node
 function node(item, shortcutUpdater) {
-  if (item.isLeaf) { return leafNode(item, shortcutUpdater) }
+  if (item.isLeaf) { return leafNode(item.data, shortcutUpdater) }
   if (item.isRoot) { return treeRoot(item, shortcutUpdater) }
   return folderNode(item, shortcutUpdater)
 }
@@ -40,17 +41,6 @@ function folderNode(item, shortcutUpdater) {
     `
   }
   return connect(render, track)
-}
-
-function leafNode(item, shortcutUpdater) {
-  function onleaf(e) {
-    shortcutUpdater.selected = item.data
-    shortcutUpdater.update()
-    e.stopPropagation()
-  }
-  return yo`
-    <li class="treeview-leaf" onclick=${onleaf}>${item.name}</li>
-  `
 }
 
 function renderChildren(childrenMap, shortcutUpdater) {

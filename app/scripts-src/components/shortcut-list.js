@@ -1,23 +1,15 @@
 const yo = require('yo-yo')
-const errorMessage = require('./error-message')
 const flatten = require('lodash.flatten')
-const globby = require('globby')
-const getOrCreate = require('./util/get-or-create')
-const shortcutListNode = require('./shortcut-list-node')
-const connect = require('throw-down/connect')
-const update = require('throw-down/update')(yo.update)
 const Path = require('path')
 const pscommand = require('./util/pscommand')
+const createEventObject = require('./util/event-object')
+const globby = require('globby')
+const searchBox = require('./search-box')
+const main = require('./shortcut-list-main')
 
 module.exports = function shortcutList(shortcutUpdater) {
-  let id
-  let errHtml
-  let shortcuts
+  let props = createEventObject()
   load()
-
-  function track(i) {
-    id = i
-  }
 
   async function load() {
     try {
@@ -33,37 +25,18 @@ module.exports = function shortcutList(shortcutUpdater) {
         getShortcuts(commonProgramsDirectory, 'common')
       ])
       shortcutsArray.sort((a, b) => a.path - b.path)
-      shortcuts = flatten(shortcutsArray)
-      onload()
+      shortcutsArray = flatten(shortcutsArray)
+      for (let shortcut of shortcutsArray) {
+        let paths = shortcut.path.split('/')
+        shortcut.paths = paths
+        shortcut.filename = paths[paths.length - 1]
+        shortcut.name = shortcut.filename.replace(/\.lnk$/, '')
+      }
+      props.shortcuts = shortcutsArray
     }
     catch (err) {
-      onload(err)
+      props.shortcuts = err
     }
-  }
-
-  function onload(err) {
-    if (err) {
-      shortcuts = []
-      errHtml = errorMessage(err, 'shortcut list')
-    }
-    else {
-      errHtml = undefined
-    }
-    update(id, render())
-  }
-
-  function render() {
-    let shortcutsHtml
-    if (Array.isArray(shortcuts)) {
-      shortcutsHtml = renderTree()
-    }
-    else {
-      shortcutsHtml = yo`<div class="throbber"></div>`
-    }
-    return yo`<div>
-      ${errHtml}
-      ${shortcutsHtml}
-    </div>`
   }
 
   async function getShortcuts(programsDirectory, source) {
@@ -71,34 +44,10 @@ module.exports = function shortcutList(shortcutUpdater) {
     return shortcuts.map(s => ({ dir: programsDirectory, path: s, source }))
   }
 
-  function renderTree() {
-    return shortcutListNode(createTree(), shortcutUpdater)
-  }
-
-  function createTree() {
-    let treeRoot = { children: new Map(), isRoot: true }
-    for (let shortcut of shortcuts) {
-      let paths = shortcut.path.split('/')
-      let pathsWithoutFinal = paths.slice(0, -1)
-      let currentParent = treeRoot
-      for (let path of pathsWithoutFinal) {
-        // create folder directory
-        let folder = getOrCreate(
-          currentParent.children,
-          path,
-          () => ({ children: new Map(), name: path })
-        )
-        currentParent = folder
-      }
-      let shortcutFilename = paths[paths.length - 1]
-      let shortcutName = shortcutFilename.replace(/\.lnk$/, '')
-      currentParent.children.set(
-        shortcutFilename,
-        { isLeaf: true, data: shortcut, name: shortcutName }
-      )
-    }
-    return treeRoot
-  }
-
-  return connect(render, track)
+  return yo`
+    <div>
+      ${searchBox(props)}
+      ${main(shortcutUpdater, props)}
+    </div>
+  `
 }
