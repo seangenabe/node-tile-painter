@@ -6,6 +6,10 @@ const createEventObject = require('./util/event-object')
 const globby = require('globby')
 const searchBox = require('./search-box')
 const main = require('./shortcut-list-main')
+const pify = require('pify')
+const Temp = pify(require('temp').track())
+const FS = require('@jokeyrhyme/pify-fs')
+const psencode = require('./util/psencode')
 
 module.exports = function shortcutList(shortcutUpdater) {
   let props = createEventObject()
@@ -41,7 +45,12 @@ module.exports = function shortcutList(shortcutUpdater) {
 
   async function getShortcuts(programsDirectory, source) {
     let shortcuts = await globby(['**/*.lnk'], { cwd: programsDirectory })
-    return shortcuts.map(s => ({ dir: programsDirectory, path: s, source }))
+    return shortcuts.map(s => ({
+      dir: programsDirectory,
+      path: s,
+      source,
+      fullPath: Path.join(programsDirectory, s)
+    }))
   }
 
   return yo`

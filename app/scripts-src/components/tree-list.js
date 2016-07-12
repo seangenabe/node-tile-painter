@@ -39,7 +39,6 @@ module.exports = function treeList(shortcutUpdater, props) {
     let treeRoot = { children: new Map(), isRoot: true }
     for (let shortcut of props.shortcuts) {
       let paths = shortcut.paths
-      console.log('shortcut', shortcut) // DEBUG
       let pathsWithoutFinal = paths.slice(0, -1)
       let currentParent = treeRoot
       for (let path of pathsWithoutFinal) {

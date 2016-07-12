@@ -27,7 +27,12 @@ module.exports = function searchResults(shortcutUpdater, props) {
     let html
     let { shortcuts } = props
     if (Array.isArray(shortcuts)) {
-      sortBy(shortcuts, s => s.name)
+      shortcuts = shortcuts.slice()
+      let q = props.q && props.q.toLowerCase()
+      shortcuts = shortcuts.filter(shortcut =>
+        shortcut.name.toLowerCase().includes(q)
+      )
+      shortcuts = sortBy(shortcuts, s => s.name.toLowerCase())
       html = shortcuts.map(
         shortcut => leafNode(shortcut, shortcutUpdater)
       )
