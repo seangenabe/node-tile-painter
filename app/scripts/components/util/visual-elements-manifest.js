@@ -1,8 +1,13 @@
 const LTX = require('ltx')
 const Path = require('path')
-const FS = require('@jokeyrhyme/pify-fs')
+const FS = require('mz/fs')
 const globby = require('globby')
 const bumpFile = require('./bump-file')
+const tempy = require('tempy')
+const commandJoin = require('command-join')
+const Elevator = require('elevator')
+const updateProgramVem = require('./update-program-vem')
+const pathToElectron = require('electron-prebuilt-path')
 
 const booleanConverter = {
   booleanToString(b) { return b ? 'on' : 'off' },
@@ -111,15 +116,32 @@ module.exports = class VisualElementsManifest {
     let xmlSerialized = xml.toString()
 
     try {
-      await FS.writeFile(vemPath, xmlSerialized)
+      await updateProgramVem(vemPath, xmlSerialized, this.shortcutPath)
     }
     catch (err) {
-      console.error('err', require('util').inspect(err, { colors: true })) // DEBUG
-      debugger
-      throw err
+      if (err.code !== 'EPERM') {
+        throw err
+      }
+      let tmpFn = tempy.file({ extension: '.png'})
+      await FS.writeFile(tmpFn, xmlSerialized)
+      const args = [
+        `${__dirname}/update-program-vem`,
+        vemPath,
+        tmpFn,
+        this.shortcutPath
+      ]
+      await new Promise((resolve, reject) => {
+        const cb = (err, stdout, stderr) => {
+          if (err) {
+            reject(err)
+            return
+          }
+          resolve()
+        }
+        Elevator.execute([pathToElectron, ...args], {}, cb)
+      })
     }
-    await bumpFile(this.shortcutPath)
-  }
+  } // async save
 
   async remove(obj) {
     let vemPath = await this.getVemPath()

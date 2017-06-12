@@ -8,7 +8,7 @@ const searchBox = require('./search-box')
 const main = require('./shortcut-list-main')
 const pify = require('pify')
 const Temp = pify(require('temp').track())
-const FS = require('@jokeyrhyme/pify-fs')
+const FS = require('mz/fs')
 const psencode = require('./util/psencode')
 
 module.exports = function shortcutList(shortcutUpdater) {
