@@ -13,12 +13,10 @@
     "start": "electron .",
     "stylus": "stylus -c -m app/index.styl",
     "stylus:watch": "npm run stylus -- --watch",
-    "babel": "babel app/scripts-src --out-dir app/scripts",
-    "babel:watch": "npm run babel -- --watch",
-    "build:electron": "electron-packager . --out=dist --prune --asar --overwrite --platform=win32 --arch=x64",
-    "watch": "chastifol [ npm run stylus:watch ] [ npm run babel:watch ]",
-    "build": "npm run stylus && npm run babel && npm run build:electron",
-    "nodemon": "nodemon --watch app/scripts --watch app/index.css --watch index.js --exec npm run start"
+    "build:electron": "electron-packager . --out=dist --prune --asar --overwrite --platform=win32 --arch=x64 icon=app/icon.ico",
+    "watch": "npm run stylus:watch",
+    "build": "npm run stylus && npm run build:electron",
+    "nodemon": "nodemon --watch app --exec npm start"
   },
   "files": [
     "index.js",
@@ -31,9 +29,6 @@
   ],
   "dependencies": {
     "@jokeyrhyme/pify-fs": "^1.0.1",
-    "babel-cli": "^6.10.1",
-    "babel-plugin-transform-async-to-generator": "^6.8.0",
-    "babel-plugin-transform-exponentiation-operator": "^6.8.0",
     "blob-to-buffer": "^1.2.6",
     "bootstrap": "^3.3.6",
     "chroma-js": "^1.1.1",
@@ -67,8 +62,8 @@
   "devDependencies": {
     "chastifol": "^3.0.1",
     "devtron": "^1.1.0",
+    "electron": "^1.6.10",
     "electron-packager": "^7.0.0",
-    "electron-prebuilt": "^1.0.1",
-    "nodemon": "^1.9.2"
+    "nodemon": "^1.11.0"
   }
 }

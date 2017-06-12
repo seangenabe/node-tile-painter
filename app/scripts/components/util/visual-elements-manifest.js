@@ -110,7 +110,14 @@ module.exports = class VisualElementsManifest {
     let vemPath = await this.getVemPath()
     let xmlSerialized = xml.toString()
 
-    await FS.writeFile(vemPath, xmlSerialized)
+    try {
+      await FS.writeFile(vemPath, xmlSerialized)
+    }
+    catch (err) {
+      console.error('err', require('util').inspect(err, { colors: true })) // DEBUG
+      debugger
+      throw err
+    }
     await bumpFile(this.shortcutPath)
   }
 
