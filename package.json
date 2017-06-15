@@ -13,7 +13,7 @@
     "start": "electron .",
     "stylus": "stylus -c -m app/index.styl",
     "stylus:watch": "npm run stylus -- --watch",
-    "build:electron": "electron-packager . --out=dist --prune --overwrite --platform=win32 --arch=x64 --icon=app/icon.ico",
+    "build:electron": "electron-packager . --out=dist --prune --overwrite --platform=win32 --arch=x64 --icon=app/icon.ico --asar",
     "watch": "npm run stylus:watch",
     "build": "npm run stylus && npm run build:electron",
     "nodemon": "nodemon --watch app --exec npm start",
