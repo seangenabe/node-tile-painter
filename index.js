@@ -5,7 +5,7 @@ const updateProgramVem = require('update-program-vem')
 const FS = require('mz/fs')
 
 // adds debug features like hotkeys for triggering dev tools and reload
-require('electron-debug')({ showDevTools: true, enabled: true })
+require('electron-debug')({ showDevTools: true })
 
 // prevent window being garbage collected
 let mainWindow
