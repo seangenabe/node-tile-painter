@@ -1,0 +1,9 @@
+{
+  "name": "update-program-vem",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "bump-file": "1.0.0"
+  }
+}

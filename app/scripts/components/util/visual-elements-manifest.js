@@ -2,12 +2,10 @@ const LTX = require('ltx')
 const Path = require('path')
 const FS = require('mz/fs')
 const globby = require('globby')
-const bumpFile = require('./bump-file')
 const tempy = require('tempy')
-const commandJoin = require('command-join')
 const Elevator = require('elevator')
-const updateProgramVem = require('./update-program-vem')
-const pathToElectron = require('electron-prebuilt-path')
+const updateProgramVem = require('update-program-vem')
+const isDev = require('electron-is-dev')
 
 const booleanConverter = {
   booleanToString(b) { return b ? 'on' : 'off' },
@@ -122,10 +120,11 @@ module.exports = class VisualElementsManifest {
       if (err.code !== 'EPERM') {
         throw err
       }
-      let tmpFn = tempy.file({ extension: '.png'})
+      let tmpFn = tempy.file({ extension: '.xml' })
       await FS.writeFile(tmpFn, xmlSerialized)
       const args = [
-        `${__dirname}/update-program-vem`,
+        '--vem',
+        '--',
         vemPath,
         tmpFn,
         this.shortcutPath
@@ -138,7 +137,7 @@ module.exports = class VisualElementsManifest {
           }
           resolve()
         }
-        Elevator.execute([pathToElectron, ...args], {}, cb)
+        Elevator.execute([process.execPath, ...args], {}, cb)
       })
     }
   } // async save

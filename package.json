@@ -13,10 +13,11 @@
     "start": "electron .",
     "stylus": "stylus -c -m app/index.styl",
     "stylus:watch": "npm run stylus -- --watch",
-    "build:electron": "electron-packager . --out=dist --prune --overwrite --asar --platform=win32 --arch=x64 icon=app/icon.ico",
+    "build:electron": "electron-packager . --out=dist --prune --overwrite --platform=win32 --arch=x64 --icon=app/icon.ico",
     "watch": "npm run stylus:watch",
     "build": "npm run stylus && npm run build:electron",
-    "nodemon": "nodemon --watch app --exec npm start"
+    "nodemon": "nodemon --watch app --exec npm start",
+    "lint": "eslint index.js app"
   },
   "files": [
     "index.js",
@@ -30,6 +31,7 @@
   "dependencies": {
     "blob-to-buffer": "^1.2.6",
     "bootstrap": "^3.3.6",
+    "bump-file": "file:modules\\bump-file",
     "chroma-js": "^1.1.1",
     "command-join": "^1.1.1",
     "concat-stream": "^1.5.1",
@@ -47,6 +49,7 @@
     "lodash.sortby": "^4.5.0",
     "ltx": "^2.4.2",
     "mime-sniffer": "0.0.3",
+    "minimist": "^1.2.0",
     "muicss": "^0.6.5",
     "mz": "^2.6.0",
     "nan": "^2.3.5",
@@ -56,6 +59,7 @@
     "temp": "^0.8.3",
     "tempy": "^0.1.0",
     "throw-down": "^0.1.7",
+    "update-program-vem": "file:modules\\update-program-vem",
     "winreg": "^1.2.1",
     "xml": "^1.0.1",
     "xmldom": "^0.1.22",
@@ -65,7 +69,13 @@
     "chastifol": "^3.0.1",
     "devtron": "^1.1.0",
     "electron": "^1.6.10",
-    "electron-packager": "^7.0.0",
+    "electron-packager": "^7.7.0",
+    "eslint": "^4.0.0",
+    "eslint-config-mirage": "^5.0.0",
     "nodemon": "^1.11.0"
-  }
+  },
+  "bundledDependencies": [
+    "bump-file",
+    "update-program-vem"
+  ]
 }

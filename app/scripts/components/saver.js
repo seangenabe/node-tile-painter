@@ -2,7 +2,7 @@ const yo = require('yo-yo')
 const Path = require('path')
 const connect = require('throw-down/connect')
 const update = require('throw-down/update')(yo.update)
-const bumpFile = require('./util/bump-file')
+const bumpFile = require('bump-file')
 
 module.exports = function saver(shortcut, props) {
   let id
