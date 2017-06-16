@@ -129,6 +129,9 @@ module.exports = class VisualElementsManifest {
         tmpFn,
         this.shortcutPath
       ]
+      if (isDev) {
+        args.unshift(`${__dirname}/../../../../../index`)
+      }
       await new Promise((resolve, reject) => {
         const cb = (err, stdout, stderr) => {
           if (err) {

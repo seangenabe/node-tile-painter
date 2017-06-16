@@ -38,6 +38,7 @@
     "edge": "^5.9.2",
     "edge-ps": "0.1.0-pre",
     "electron-debug": "^1.0.0",
+    "electron-is-dev": "^0.1.2",
     "electron-prebuilt-path": "^2.0.0",
     "elevator": "^2.2.3",
     "end-of-stream": "^1.1.0",
